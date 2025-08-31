@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuPair Connect - Find Your Perfect Match</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50 text-dark">
+    <!-- Navigation -->
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-sm shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-2">
+                <i class="fa fa-home text-primary text-2xl"></i>
+                <span class="text-xl font-bold text-primary" data-i18n="brand">AuPair Connect</span>
+            </a>
+            
+            <!-- Language Switch -->
+            <div class="hidden md:block mr-4">
+                <button id="langEn" class="px-2 py-1 text-sm rounded hover:bg-gray-100 transition-custom language-btn active" data-lang="en">English</button>
+                <button id="langZh" class="px-2 py-1 text-sm rounded hover:bg-gray-100 transition-custom language-btn" data-lang="zh">中文</button>
+            </div>
+            
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#how-it-works" class="text-gray-700 hover:text-primary transition-custom" data-i18n="nav.howItWorks">How It Works</a>
+                <a href="#families" class="text-gray-700 hover:text-primary transition-custom" data-i18n="nav.families">For Families</a>
+                <a href="#aupairs" class="text-gray-700 hover:text-primary transition-custom" data-i18n="nav.aupairs">For Au Pairs</a>
+                <a href="#testimonials" class="text-gray-700 hover:text-primary transition-custom" data-i18n="nav.successStories">Success Stories</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <button id="loginBtn" class="hidden md:block px-4 py-2 text-primary border border-primary rounded-lg hover:bg-primary/5 transition-custom" data-i18n="nav.login">
+                    Log In
+                </button>
+                <button id="registerBtn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-md hover:shadow-lg" data-i18n="nav.getStarted">
+                    Get Started
+                </button>
+                
+                <!-- Mobile menu button -->
+                <button id="mobileMenuBtn" class="md:hidden text-gray-700 focus:outline-none">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <!-- Mobile Language Switch -->
+                <div class="flex space-x-2 pb-2 border-b">
+                    <button id="mobileLangEn" class="px-3 py-1 text-sm rounded hover:bg-gray-100 transition-custom language-btn active" data-lang="en">English</button>
+                    <button id="mobileLangZh" class="px-3 py-1 text-sm rounded hover:bg-gray-100 transition-custom language-btn" data-lang="zh">中文</button>
+                </div>
+                
+                <a href="#how-it-works" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.howItWorks">How It Works</a>
+                <a href="#families" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.families">For Families</a>
+                <a href="#aupairs" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.aupairs">For Au Pairs</a>
+                <a href="#testimonials" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.successStories">Success Stories</a>
+                <button id="mobileLoginBtn" class="px-4 py-2 text-primary border border-primary roundedrimary rounded-lg hover:bg-primary/5 transition-custom w-full" data-i18n="nav.login">
+                    Log In
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 md:pt-32 md:pb-24 bg-gradient-to-br from-blue-50 to-green-50">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-rowow items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-dark mb-4">
+                        <span data-i18n="hero.title">Find Your Perfect</span> <span class="text-primary" data-i18n="hero.auPair">Au Pair</span> <span data-i18n="hero.or">or</span> <span class="text-secondary" data-i18n="hero.hostFamily">Host Family</span>
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8 max-w-lg" data-i18n="hero.description">
+                        Connecting families with qualified au pairs for meaningful cultural exchanges and reliable childcare.
+                    </p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-lg hover:shadow-xl text-center" data-i18n="hero.findAuPair">
+                            Find an Au Pair
+                        </button>
+                        <button class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-custom shadow-lg hover:shadow-xl text-center" data-i18n="hero.findFamily">
+                            Find a Host Family
+                        </button>
+                    </div>
+                    <div class="mt-8 flex items-center text-gray-600">
+                        <i class="fa fa-check-circle text-green-500 mr-2"></i>
+                        <span data-i18n="hero.trusted">Trusted by 10,000+ families worldwide</span>
+                    </div>
+                </div>
+                <div class="md:w-1/2 relative">
+                    <div class="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform transition-transform hover:scale-[1.02] duration-500">
+                        <img src="https://picsum.photos/600/400" alt="Happy family with au pair" class="w-full h-auto">
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-accent/20 rounded-full -z-10"></div>
+                    <div class="absolute -top-6 -right-6 w-40 h-40 bg-primary/20 rounded-full -z-10"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4" data-i18n="howItWorks.title">How It Works</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto" data-i18n="howItWorks.description">Simple steps to find your perfect match and start your au pair journey</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-custom border border-gray-100">
+                    <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa fa-user-plus text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-i18n="howItWorks.step1.title">Create Your Profile</h3>
+                    <p class="text-gray-600" data-i18n="howItWorks.step1.description">Sign up and create a detailed profile highlighting your preferences, experience, and expectations.</p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-custom border border-gray-100">
+                    <div class="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa fa-search text-secondary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-i18n="howItWorks.step2.title">Browse & Connect</h3>
+                    <p class="text-gray-600" data-i18n="howItWorks.step2.description">Search through profiles that match your criteria and start conversations with potential matches.</p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-custom border border-gray-100">
+                    <div class="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center mb-6">
+                        <i class="fa fa-handshake-o text-accent text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" data-i18n="howItWorks.step3.title">Start Your Journey</h3>
+                    <p class="text-gray-600" data-i18n="howItWorks.step3.description">Finalize your arrangement, prepare for the experience, and begin your cultural exchange adventure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Families Section -->
+    <section id="families" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <img src="https://picsum.photos/500/400" alt="Family with children" class="rounded-xl shadow-xl w-full h-auto">
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6" data-i18n="families.title">For Host Families</h2>
+                    <p class="text-gray-600 mb-6" data-i18n="families.description">Find a qualified au pair to care for your children and bring a new cultural perspective to your home.</p>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span data-i18n="families.benefit1">Access to pre-screened au pair profiles from around the world</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span data-i18n="families.benefit2">Communication tools to connect and interview potential candidates</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span data-i18n="families.benefit3">Support throughout the matching process and beyond</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span data-i18n="families.benefit4">Resources for a successful cultural exchange experience</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-md hover:shadow-lg">
+                        <span data-i18n="families.cta">Find an Au Pair</span> <i class="fa fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Au Pairs Section -->
+    <section id="aupairs" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row-reverse items-center gap-12">
+                <div class="md:w-1/2">
+                    <img src="https://picsum.photos/500/400?random=2" alt="Au pair with children" class="rounded-xl shadow-xl w-full h-auto">
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6" data-i18n="aupairs.title">For Au Pairs</h2>
+                    <p class="text-gray-600 mb-6" data-i18n="aupairs.description">Discover amazing host families around the world and embark on a life-changing cultural exchange.</p>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                            <span data-i18n="aupairs.benefit1">Browse verified host family profiles in your desired countries</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                            <span data-i18n="aupairs.benefit2">Showcase your skills, experience, and personality to stand out</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                            <span data-i18n="aupairs.benefit3">Get guidance on visa requirements and cultural preparation</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                            <span data-i18n="aupairs.benefit4">Connect with other au pairs for advice and support</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-custom shadow-md hover:shadow-lg">
+                        <span data-i18n="aupairs.cta">Find a Host Family</span> <i class="fa fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4" data-i18n="testimonials.title">Success Stories</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto" data-i18n="testimonials.description">Hear from families and au pairs who found their perfect match through our platform</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-custom">
+                    <div class="flex items-center mb-4">
+                        <img src="https://picsum.photos/100/100?random=3" alt="Family portrait" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="font-bold" data-i18n="testimonials.family1.name">The Johnson Family</h4>
+                            <p class="text-gray-500 text-sm" data-i18n="testimonials.family1.location">United States</p>
+                        </div>
+                    </div>
+                    <div class="text-yellow-400 mb-3">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 italic" data-i18n="testimonials.family1.quote">"We found Maria through AuPair Connect and she's been an amazing addition to our family. Our children adore her, and she's helped them learn Spanish while sharing her culture with us."</p>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-custom">
+                    <div class="flex items-center mb-4">
+                        <img src="https://picsum.photos/100/100?random=4" alt="Au pair portrait" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="font-bold" data-i18n="testimonials.aupair1.name">Sophie Laurent</h4>
+                            <p class="text-gray-500 text-sm" data-i18n="testimonials.aupair1.location">France</p>
+                        </div>
+                    </div>
+                    <div class="text-yellow-400 mb-3">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 italic" data-i18n="testimonials.aupair1.quote">"My experience with the Thompson family in Canada has been life-changing. I've improved my English, traveled, and made lifelong connections. The platform made the whole process so easy!"</p>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-custom">
+                    <div class="flex items-center mb-4">
+                        <img src="https://picsum.photos/100/100?random=5" alt="Family portrait" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="font-bold" data-i18n="testimonials.family2.name">The Müller Family</h4>
+                            <p class="text-gray-500 text-sm" data-i18n="testimonials.family2.location">Germany</p>
+                        </div>
+                    </div>
+                    <div class="text-yellow-400 mb-3">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-half-o"></i>
+                    </div>
+                    <p class="text-gray-600 italic" data-i18n="testimonials.family2.quote">"Finding James was perfect for our family. He's great with the kids and has taught them so much about American culture. The matching process was straightforward and efficient."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-primary/5">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6" data-i18n="cta.title">Ready to Start Your Au Pair Journey?</h2>
+            <p class="text-gray-600 max-w-2xl mx-auto mb-8" data-i18n="cta.description">Join thousands of families and au pairs finding their perfect matches</p>
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <button class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-lg hover:shadow-xl" data-i18n="cta.familyCta">
+                    Create a Family Profile
+                </button>
+                <button class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-custom shadow-lg hover:shadow-xl" data-i18n="cta.aupairCta">
+                    Create an Au Pair Profile
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa fa-home text-primary text-2xl"></i>
+                        <span class="text-xl font-bold text-primary" data-i18n="brand">AuPair Connect</span>
+                    </div>
+                    <p class="text-gray-400 mb-4" data-i18n="footer.tagline">Connecting families with qualified au pairs for meaningful cultural exchanges.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom"><i class="fa fa-facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom"><i class="fa fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom"><i class="fa fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom"><i class="fa fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4" data-i18n="footer.families">For Families</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.findAuPair">How to Find an Au Pair</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.familyReg">Family Registration</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.familyGuide">Host Family Guide</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.familyFaqs">FAQs for Families</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4" data-i18n="footer.aupairs">For Au Pairs</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.findFamily">How to Find a Family</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.aupairReg">Au Pair Registration</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.aupairGuide">Au Pair Guide</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.aupairFaqs">FAQs for Au Pairs</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4" data-i18n="footer.support">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.contact">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.safety">Safety Tips</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.terms">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom" data-i18n="footer.privacy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+                <p data-i18n="footer.copyright">&copy; 2023 AuPair Connect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 transform transition-all scale-95 opacity-0" id="modalContent">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold" data-i18n="login.title">Log In</h3>
+                <button id="closeLoginModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="loginEmail" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="login.email">Email</label>
+                    <input type="email" id="loginEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" placeholder="your@email.com" required>
+                </div>
+                
+                <div>
+                    <label for="loginPassword" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="login.password">Password</label>
+                    <input type="password" id="loginPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" placeholder="••••••••" required>
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="rememberMe" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                        <label for="rememberMe" class="ml-2 block text-sm text-gray-700" data-i18n="login.remember">Remember me</label>
+                    </div>
+                    <a href="#" class="text-sm text-primary hover:text-primary/80" data-i18n="login.forgot">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="w-full px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-md hover:shadow-lg" data-i18n="login.cta">
+                    Log In
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-gray-600" data-i18n="login.noAccount">Don't have an account? <button id="switchToRegister" class="text-primary font-medium hover:text-primary/80" data-i18n="login.signup">Sign up</button></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 transform transition-all scale-95 opacity-0" id="registerModalContent">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold" data-i18n="register.title">Create Account</h3>
+                <button id="closeRegisterModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="registerForm" class="space-y-4">
+                <div>
+                    <label for="registerName" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="register.name">Full Name</label>
+                    <input type="text" id="registerName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" placeholder="John Doe" required>
+                </div>
+                
+                <div>
+                    <label for="registerEmail" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="register.email">Email</label>
+                    <input type="email" id="registerEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" placeholder="your@email.com" required>
+                </div>
+                
+                <div>
+                    <label for="registerPassword" class="block text-sm font-medium text-gray-700 mb-1" data-i18n="register.password">Password</label>
+                    <input type="password" id="registerPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" placeholder="••••••••" required minlength="8">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2" data-i18n="register.userType">I am a:</label>
+                    <div class="flex space-x-4">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="userType" value="family" class="text-primary focus:ring-primary border-gray-300" required>
+                            <span class="ml-2 text-gray-700" data-i18n="register.family">Host Family</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="userType" value="aupair" class="text-primary focus:ring-primary border-gray-300" required>
+                            <span class="ml-2 text-gray-700" data-i18n="register.aupair">Au Pair</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex items-start">
+                    <input type="checkbox" id="termsAgree" class="h-4 w-4 mt-1 text-primary focus:ring-primary border-gray-300 rounded" required>
+                    <label for="termsAgree" class="ml-2 block text-sm text-gray-700">
+                        <span data-i18n="register.agree">I agree to the</span> <a href="#" class="text-primary hover:text-primary/80" data-i18n="register.terms">Terms of Service</a> <span data-i18n="register.and">and</span> <a href="#" class="text-primary hover:text-primary/80" data-i18n="register.privacy">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <button type="submit" class="w-full px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-md hover:shadow-lg" data-i18n="register.cta">
+                    Create Account
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-gray-600" data-i18n="register.haveAccount">Already have an account? <button id="switchToLogin" class="text-primary font-medium hover:text-primary/80" data-i18n="register.login">Log in</button></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Translation data - English and Chinese
+        const translations = {
+            en: {
+                brand: "AuPair Connect",
+                nav: {
+                    howItWorks: "How It Works",
+                    families: "For Families",
+                    aupairs: "For Au Pairs",
+                    successStories: "Success Stories",
+                    login: "Log In",
+                    getStarted: "Get Started"
+                },
+                hero: {
+                    title: "Find Your Perfect",
+                    auPair: "Au Pair",
+                    or: "or",
+                    hostFamily: "Host Family",
+                    description: "Connecting families with qualified au pairs for meaningful cultural exchanges and reliable childcare.",
+                    findAuPair: "Find an Au Pair",
+                    findFamily: "Find a Host Family",
+                    trusted: "Trusted by 10,000+ families worldwide"
+                },
+                howItWorks: {
+                    title: "How It Works",
+                    description: "Simple steps to find your perfect match and start your au pair journey",
+                    step1: {
+                        title: "Create Your Profile",
+                        description: "Sign up and create a detailed profile highlighting your preferences, experience, and expectations."
+                    },
+                    step2: {
+                        title: "Browse & Connect",
+                        description: "Search through profiles that match your criteria and start conversations with potential matches."
+                    },
+                    step3: {
+                        title: "Start Your Journey",
+                        description: "Finalize your arrangement, prepare for the experience, and begin your cultural exchange adventure."
+                    }
+                },
+                families: {
+                    title: "For Host Families",
+                    description: "Find a qualified au pair to care for your children and bring a new cultural perspective to your home.",
+                    benefit1: "Access to pre-screened au pair profiles from around the world",
+                    benefit2: "Communication tools to connect and interview potential candidates",
+                    benefit3: "Support throughout the matching process and beyond",
+                    benefit4: "Resources for a successful cultural exchange experience",
+                    cta: "Find an Au Pair"
+                },
+                aupairs: {
+                    title: "For Au Pairs",
+                    description: "Discover amazing host families around the world and embark on a life-changing cultural exchange.",
+                    benefit1: "Browse verified host family profiles in your desired countries",
+                    benefit2: "Showcase your skills, experience, and personality to stand out",
+                    benefit3: "Get guidance on visa requirements and cultural preparation",
+                    benefit4: "Connect with other au pairs for advice and support",
+                    cta: "Find a Host Family"
+                },
+                testimonials: {
+                    title: "Success Stories",
+                    description: "Hear from families and au pairs who found their perfect match through our platform",
+                    family1: {
+                        name: "The Johnson Family",
+                        location: "United States",
+                        quote: "\"We found Maria through AuPair Connect and she's been an amazing addition to our family. Our children adore her, and she's helped them learn Spanish while sharing her culture with us.\""
+                    },
+                    aupair1: {
+                        name: "Sophie Laurent",
+                        location: "France",
+                        quote: "\"My experience with the Thompson family in Canada has been life-changing. I've improved my English, traveled, and made lifelong connections. The platform made the whole process so easy!\""
+                    },
+                    family2: {
+                        name: "The Müller Family",
+                        location: "Germany",
+                        quote: "\"Finding James was perfect for our family. He's great with the kids and has taught them so much about American culture. The matching process was straightforward and efficient.\""
+                    }
+                },
+                cta: {
+                    title: "Ready to Start Your Au Pair Journey?",
+                    description: "Join thousands of families and au pairs finding their perfect matches",
+                    familyCta: "Create a Family Profile",
+                    aupairCta: "Create an Au Pair Profile"
+                },
+                footer: {
+                    tagline: "Connecting families with qualified au pairs for meaningful cultural exchanges.",
+                    families: "For Families",
+                    findAuPair: "How to Find an Au Pair",
+                    familyReg: "Family Registration",
+                    familyGuide: "Host Family Guide",
+                    familyFaqs: "FAQs for Families",
+                    aupairs: "For Au Pairs",
+                    findFamily: "How to Find a Family",
+                    aupairReg: "Au Pair Registration",
+                    aupairGuide: "Au Pair Guide",
+                    aupairFaqs: "FAQs for Au Pairs",
+                    support: "Support",
+                    contact: "Contact Us",
+                    safety: "Safety Tips",
+                    terms: "Terms of Service",
+                    privacy: "Privacy Policy",
+                    copyright: "&copy; 2023 AuPair Connect. All rights reserved."
+                },
+                login: {
+                    title: "Log In",
+                    email: "Email",
+                    password: "Password",
+                    remember: "Remember me",
+                    forgot: "Forgot password?",
+                    cta: "Log In",
+                    noAccount: "Don't have an account?",
+                    signup: "Sign up"
+                },
+                register: {
+                    title: "Create Account",
+                    name: "Full Name",
+                    email: "Email",
+                    password: "Password",
+                    userType: "I am a:",
+                    family: "Host Family",
+                    aupair: "Au Pair",
+                    agree: "I agree to the",
+                    terms: "Terms of Service",
+                    and: "and",
+                    privacy: "Privacy Policy",
+                    cta: "Create Account",
+                    haveAccount: "Already have an account?",
+                    login: "Log in"
+                }
+            },
+            zh: {
+                brand: "互惠生连接",
+                nav: {
+                    howItWorks: "如何运作",
+                    families: "对家庭而言",
+                    aupairs: "对互惠生而言",
+                    successStories: "成功案例",
+                    login: "登录",
+                    getStarted: "立即开始"
+                },
+                hero: {
+                    title: "找到您理想的",
+                    auPair: "互惠生",
+                    or: "或",
+                    hostFamily: "寄宿家庭",
+                    description: "为家庭和合格的互惠生牵线搭桥，实现有意义的文化交流和可靠的儿童看护。",
+                    findAuPair: "寻找互惠生",
+                    findFamily: "寻找寄宿家庭",
+                    trusted: "全球10,000+家庭的信赖之选"
+                },
+                howItWorks: {
+                    title: "如何运作",
+                    description: "简单几步，找到理想匹配，开启您的互惠生之旅",
+                    step1: {
+                        title: "创建您的档案",
+                        description: "注册并创建详细档案，突出您的偏好、经验和期望。"
+                    },
+                    step2: {
+                        title: "浏览与联系",
+                        description: "搜索符合您条件的档案，开始与潜在匹配对象交流。"
+                    },
+                    step3: {
+                        title: "开启旅程",
+                        description: "确定安排，为体验做准备，开始您的文化交流冒险。"
+                    }
+                },
+                families: {
+                    title: "对寄宿家庭",
+                    description: "找到合格的互惠生照顾您的孩子，为家庭带来新的文化视角。",
+                    benefit1: "获取来自世界各地经过筛选的互惠生档案",
+                    benefit2: "用于联系和面试潜在候选人的沟通工具",
+                    benefit3: "匹配过程及后续的全程支持",
+                    benefit4: "成功进行文化交流的资源",
+                    cta: "寻找互惠生"
+                },
+                aupairs: {
+                    title: "对互惠生",
+                    description: "发现世界各地优秀的寄宿家庭，开启改变人生的文化交流。",
+                    benefit1: "浏览您理想国家的经过验证的寄宿家庭档案",
+                    benefit2: "展示您的技能、经验和个性以脱颖而出",
+                    benefit3: "获取有关签证要求和文化准备的指导",
+                    benefit4: "与其他互惠生联系以获取建议和支持",
+                    cta: "寻找寄宿家庭"
+                },
+                testimonials: {
+                    title: "成功案例",
+                    description: "听听通过我们平台找到理想匹配的家庭和互惠生怎么说",
+                    family1: {
+                        name: "约翰逊家庭",
+                        location: "美国",
+                        quote: "\"我们通过互惠生连接找到了玛丽亚，她成为了我们家庭中很棒的一员。孩子们非常喜欢她，她帮助他们学习西班牙语，同时也与我们分享她的文化。\""
+                    },
+                    aupair1: {
+                        name: "索菲·洛朗",
+                        location: "法国",
+                        quote: "\"我在加拿大汤普森家庭的经历改变了我的人生。我的英语得到了提高，我旅行过，还建立了终生的联系。这个平台让整个过程变得如此简单！\""
+                    },
+                    family2: {
+                        name: "米勒家庭",
+                        location: "德国",
+                        quote: "\"找到詹姆斯对我们家来说太完美了。他对孩子们很好，教给他们很多关于美国文化的知识。匹配过程简单高效。\""
+                    }
+                },
+                cta: {
+                    title: "准备好开始您的互惠生之旅了吗？",
+                    description: "加入成千上万正在寻找理想匹配的家庭和互惠生的行列",
+                    familyCta: "创建家庭档案",
+                    aupairCta: "创建互惠生档案"
+                },
+                footer: {
+                    tagline: "为家庭和合格的互惠生牵线搭桥，实现有意义的文化交流。",
+                    families: "对家庭而言",
+                    findAuPair: "如何找到互惠生",
+                    familyReg: "家庭注册",
+                    familyGuide: "寄宿家庭指南",
+                    familyFaqs: "家庭常见问题",
+                    aupairs: "对互惠生而言",
+                    findFamily: "如何找到家庭",
+                    aupairReg: "互惠生注册",
+                    aupairGuide: "互惠生指南",
+                    aupairFaqs: "互惠生常见问题",
+                    support: "支持",
+                    contact: "联系我们",
+                    safety: "安全提示",
+                    terms: "服务条款",
+                    privacy: "隐私政策",
+                    copyright: "&copy; 2023 互惠生连接。保留所有权利。"
+                },
+                login: {
+                    title: "登录",
+                    email: "电子邮箱",
+                    password: "密码",
+                    remember: "记住我",
+                    forgot: "忘记密码？",
+                    cta: "登录",
+                    noAccount: "没有账号？",
+                    signup: "注册"
+                },
+                register: {
+                    title: "创建账号",
+                    name: "全名",
+                    email: "电子邮箱",
+                    password: "密码",
+                    userType: "我是：",
+                    family: "寄宿家庭",
+                    aupair: "互惠生",
+                    agree: "我同意",
+                    terms: "服务条款",
+                    and: "和",
+                    privacy: "隐私政策",
+                    cta: "创建账号",
+                    haveAccount: "已有账号？",
+                    login: "登录"
+                }
+            }
+        };
+
+        // Set language based on user preference or default to English
+        function setLanguage(lang) {
+            // Update active language button
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-primary/10', 'font-medium');
+            });
+            document.querySelectorAll(`.language-btn[data-lang="${lang}"]`).forEach(btn => {
+                btn.classList.add('active', 'bg-primary/10', 'font-medium');
+            });
+            
+            // Save preference to localStorage
+            localStorage.setItem('preferredLanguage', lang);
+            
+            // Get all elements with data-i18n attribute
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const translation = getNestedTranslation(translations[lang], key);
+                
+                if (translation) {
+                    element.innerHTML = translation;
+                }
+            });
+            
+            // Update document language attribute
+            document.documentElement.lang = lang;
+        }
+        
+        // Helper function to get nested translations
+        function getNestedTranslation(obj, path) {
+            return path.split('.').reduce((acc, part) => {
+                return acc && acc[part] ? acc[part] : null;
+            }, obj);
+        }
+        
+        // Initialize language
+        function initLanguage() {
+            // Check for saved preference or use browser language
+            const savedLang = localStorage.getItem('preferredLanguage');
+            const browserLang = navigator.language.split('-')[0];
+            
+            let initialLang = 'en';
+            if (savedLang && translations[savedLang]) {
+                initialLang = savedLang;
+            } else if (browserLang && translations[browserLang]) {
+                initialLang = browserLang;
+            }
+            
+            setLanguage(initialLang);
+        }
+        
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-2', 'shadow-md');
+                navbar.classList.remove('py-3', 'shadow-sm');
+            } else {
+                navbar.classList.add('py-3', 'shadow-sm');
+                navbar.classList.remove('py-2', 'shadow-md');
+            }
+        });
+        
+        // Language switch handlers
+        document.getElementById('langEn').addEventListener('click', () => setLanguage('en'));
+        document.getElementById('langZh').addEventListener('click', () => setLanguage('zh'));
+        document.getElementById('mobileLangEn').addEventListener('click', () => setLanguage('en'));
+        document.getElementById('mobileLangZh').addEventListener('click', () => setLanguage('zh'));
+        
+        // Modal functionality
+        const loginBtn = document.getElementById('loginBtn');
+        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+        const modalContent = document.getElementById('modalContent');
+        const registerModalContent = document.getElementById('registerModalContent');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeRegisterModal = document.getElementById('closeRegisterModal');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        
+        function openLoginModal() {
+            loginModal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeLoginModalFunc() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                loginModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+        
+        function openRegisterModal() {
+            registerModal.classList.remove('hidden');
+            setTimeout(() => {
+                registerModalContent.classList.remove('scale-95', 'opacity-0');
+                registerModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeRegisterModalFunc() {
+            registerModalContent.classList.remove('scale-100', 'opacity-100');
+            registerModalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                registerModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+        
+        loginBtn.addEventListener('click', openLoginModal);
+        mobileLoginBtn.addEventListener('click', openLoginModal);
+        registerBtn.addEventListener('click', openRegisterModal);
+        closeLoginModal.addEventListener('click', closeLoginModalFunc);
+        closeRegisterModal.addEventListener('click', closeRegisterModalFunc);
+        
+        switchToRegister.addEventListener('click', () => {
+            closeLoginModalFunc();
+            setTimeout(openRegisterModal, 300);
+        });
+        
+        switchToLogin.addEventListener('click', () => {
+            closeRegisterModalFunc();
+            setTimeout(openLoginModal, 300);
+        });
+        
+        // Close modals when clicking outside
+        loginModal.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                closeLoginModalFunc();
+            }
+        });
+        
+        registerModal.addEventListener('click', (e) => {
+            if (e.target === registerModal) {
+                closeRegisterModalFunc();
+            }
+        });
+        
+        // Form submissions
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get form values
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Send request to backend API
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    closeLoginModalFunc();
+                    // Update UI for logged in user
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during login');
+            });
+        });
+        
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const userType = document.querySelector('input[name="userType"]:checked').value;
+            
+            // Send request to backend API
+            fetch('/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password, user_type: userType }),
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    closeRegisterModalFunc();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during registration');
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Close mobile menu if open
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                    
+                    // Scroll to target
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', initLanguage);
+    </script>
+</body>
+</html>
