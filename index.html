@@ -35,6 +35,14 @@
             .transition-custom {
                 transition: all 0.3s ease;
             }
+            .page-content {
+                display: none;
+                padding-top: 80px;
+                min-height: calc(100vh - 80px);
+            }
+            .page-content.active {
+                display: block;
+            }
         }
     </style>
 </head>
@@ -42,7 +50,7 @@
     <!-- Navigation -->
     <header id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-sm shadow-sm">
         <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="#" class="flex items-center space-x-2">
+            <a href="#" class="flex items-center space-x-2" id="homeLink">
                 <i class="fa fa-home text-primary text-2xl"></i>
                 <span class="text-xl font-bold text-primary" data-i18n="brand">AuPair Connect</span>
             </a>
@@ -61,7 +69,8 @@
                 <a href="#testimonials" class="text-gray-700 hover:text-primary transition-custom" data-i18n="nav.successStories">Success Stories</a>
             </nav>
             
-            <div class="flex items-center space-x-4">
+            <!-- Guest Navigation -->
+            <div id="guestNav" class="flex items-center space-x-4">
                 <button id="loginBtn" class="hidden md:block px-4 py-2 text-primary border border-primary rounded-lg hover:bg-primary/5 transition-custom" data-i18n="nav.login">
                     Log In
                 </button>
@@ -74,9 +83,41 @@
                     <i class="fa fa-bars text-xl"></i>
                 </button>
             </div>
+            
+            <!-- User Navigation (Hidden by default) -->
+            <div id="userNav" class="flex items-center space-x-4 hidden">
+                <!-- User Menu -->
+                <div class="relative group">
+                    <button class="flex items-center space-x-2 focus:outline-none">
+                        <img id="userAvatar" src="https://picsum.photos/40/40?random=user" alt="User profile" class="w-8 h-8 rounded-full object-cover border-2 border-primary">
+                        <span id="userName" class="hidden md:inline-block font-medium text-gray-800"></span>
+                        <i class="fa fa-chevron-down text-xs text-gray-500"></i>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 transform opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 origin-top-right">
+                        <a href="#profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary transition-custom page-link" data-i18n="userMenu.profile">My Profile</a>
+                        <a href="#messages" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary transition-custom page-link" data-i18n="userMenu.messages">Messages</a>
+                        <a href="#bookmarks" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary transition-custom page-link" data-i18n="userMenu.bookmarks">Bookmarks</a>
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <a href="#settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary transition-custom page-link" data-i18n="userMenu.settings">Settings</a>
+                        <button id="logoutBtn" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-custom" data-i18n="userMenu.logout">Logout</button>
+                    </div>
+                </div>
+                
+                <!-- Notifications -->
+                <button class="relative p-2 text-gray-600 hover:text-primary hover:bg-primary/5 rounded-full transition-custom">
+                    <i class="fa fa-bell-o"></i>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+                
+                <!-- Mobile menu button -->
+                <button id="userMobileMenuBtn" class="md:hidden text-gray-700 focus:outline-none">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
         </div>
         
-        <!-- Mobile Navigation -->
+        <!-- Mobile Navigation (Guest) -->
         <div id="mobileMenu" class="hidden md:hidden bg-white border-t">
             <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
                 <!-- Mobile Language Switch -->
@@ -89,247 +130,659 @@
                 <a href="#families" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.families">For Families</a>
                 <a href="#aupairs" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.aupairs">For Au Pairs</a>
                 <a href="#testimonials" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.successStories">Success Stories</a>
-                <button id="mobileLoginBtn" class="px-4 py-2 text-primary border border-primary roundedrimary rounded-lg hover:bg-primary/5 transition-custom w-full" data-i18n="nav.login">
+                <button id="mobileLoginBtn" class="px-4 py-2 text-primary border border-primary rounded-lg hover:bg-primary/5 transition-custom w-full" data-i18n="nav.login">
                     Log In
                 </button>
             </div>
         </div>
+        
+        <!-- Mobile Navigation (User) -->
+        <div id="userMobileMenu" class="hidden md:hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <!-- Mobile Language Switch -->
+                <div class="flex space-x-2 pb-2 border-b">
+                    <button id="userMobileLangEn" class="px-3 py-1 text-sm rounded hover:bg-gray-100 transition-custom language-btn active" data-lang="en">English</button>
+                    <button id="userMobileLangZh" class="px-3 py-1 text-sm rounded hover:bg-gray-100 transition-custom language-btn" data-lang="zh">中文</button>
+                </div>
+                
+                <a href="#how-it-works" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.howItWorks">How It Works</a>
+                <a href="#families" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.families">For Families</a>
+                <a href="#aupairs" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.aupairs">For Au Pairs</a>
+                <a href="#testimonials" class="text-gray-700 hover:text-primary py-2 transition-custom" data-i18n="nav.successStories">Success Stories</a>
+                
+                <div class="border-t border-gray-100 my-1 pt-2">
+                    <a href="#profile" class="flex items-center text-gray-700 hover:text-primary py-2 transition-custom page-link" data-i18n="userMenu.profile">
+                        <i class="fa fa-user-o mr-3 w-5 text-center"></i> My Profile
+                    </a>
+                    <a href="#messages" class="flex items-center text-gray-700 hover:text-primary py-2 transition-custom page-link" data-i18n="userMenu.messages">
+                        <i class="fa fa-envelope-o mr-3 w-5 text-center"></i> Messages
+                    </a>
+                    <a href="#bookmarks" class="flex items-center text-gray-700 hover:text-primary py-2 transition-custom page-link" data-i18n="userMenu.bookmarks">
+                        <i class="fa fa-bookmark-o mr-3 w-5 text-center"></i> Bookmarks
+                    </a>
+                    <a href="#settings" class="flex items-center text-gray-700 hover:text-primary py-2 transition-custom page-link" data-i18n="userMenu.settings">
+                        <i class="fa fa-cog mr-3 w-5 text-center"></i> Settings
+                    </a>
+                    <button id="mobileLogoutBtn" class="flex items-center w-full text-left text-red-600 hover:bg-red-50 py-2 transition-custom" data-i18n="userMenu.logout">
+                        <i class="fa fa-sign-out mr-3 w-5 text-center"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="pt-24 pb-16 md:pt-32 md:pb-24 bg-gradient-to-br from-blue-50 to-green-50">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-rowow items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0">
-                    <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-dark mb-4">
-                        <span data-i18n="hero.title">Find Your Perfect</span> <span class="text-primary" data-i18n="hero.auPair">Au Pair</span> <span data-i18n="hero.or">or</span> <span class="text-secondary" data-i18n="hero.hostFamily">Host Family</span>
-                    </h1>
-                    <p class="text-lg text-gray-600 mb-8 max-w-lg" data-i18n="hero.description">
-                        Connecting families with qualified au pairs for meaningful cultural exchanges and reliable childcare.
-                    </p>
-                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                        <button class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-lg hover:shadow-xl text-center" data-i18n="hero.findAuPair">
-                            Find an Au Pair
-                        </button>
-                        <button class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-custom shadow-lg hover:shadow-xl text-center" data-i18n="hero.findFamily">
-                            Find a Host Family
-                        </button>
+    <!-- Home Page Content -->
+    <div id="home" class="page-content active">
+        <!-- Hero Section -->
+        <section class="pt-24 pb-16 md:pt-32 md:pb-24 bg-gradient-to-br from-blue-50 to-green-50">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/2 mb-10 md:mb-0">
+                        <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-dark mb-4">
+                            <span data-i18n="hero.title">Find Your Perfect</span> <span class="text-primary" data-i18n="hero.auPair">Au Pair</span> <span data-i18n="hero.or">or</span> <span class="text-secondary" data-i18n="hero.hostFamily">Host Family</span>
+                        </h1>
+                        <p class="text-lg text-gray-600 mb-8 max-w-lg" data-i18n="hero.description">
+                            Connecting families with qualified au pairs for meaningful cultural exchanges and reliable childcare.
+                        </p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                            <button class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-lg hover:shadow-xl text-center" data-i18n="hero.findAuPair">
+                                Find an Au Pair
+                            </button>
+                            <button class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-custom shadow-lg hover:shadow-xl text-center" data-i18n="hero.findFamily">
+                                Find a Host Family
+                            </button>
+                        </div>
+                        <div class="mt-8 flex items-center text-gray-600">
+                            <i class="fa fa-check-circle text-green-500 mr-2"></i>
+                            <span data-i18n="hero.trusted">Trusted by 10,000+ families worldwide</span>
+                        </div>
                     </div>
-                    <div class="mt-8 flex items-center text-gray-600">
-                        <i class="fa fa-check-circle text-green-500 mr-2"></i>
-                        <span data-i18n="hero.trusted">Trusted by 10,000+ families worldwide</span>
+                    <div class="md:w-1/2 relative">
+                        <div class="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform transition-transform hover:scale-[1.02] duration-500">
+                            <img src="https://picsum.photos/600/400" alt="Happy family with au pair" class="w-full h-auto">
+                        </div>
+                        <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-accent/20 rounded-full -z-10"></div>
+                        <div class="absolute -top-6 -right-6 w-40 h-40 bg-primary/20 rounded-full -z-10"></div>
                     </div>
-                </div>
-                <div class="md:w-1/2 relative">
-                    <div class="relative z-10 rounded-2xl overflow-hidden shadow-2xl transform transition-transform hover:scale-[1.02] duration-500">
-                        <img src="https://picsum.photos/600/400" alt="Happy family with au pair" class="w-full h-auto">
-                    </div>
-                    <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-accent/20 rounded-full -z-10"></div>
-                    <div class="absolute -top-6 -right-6 w-40 h-40 bg-primary/20 rounded-full -z-10"></div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4" data-i18n="howItWorks.title">How It Works</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto" data-i18n="howItWorks.description">Simple steps to find your perfect match and start your au pair journey</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Step 1 -->
-                <div class="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-custom border border-gray-100">
-                    <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                        <i class="fa fa-user-plus text-primary text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3" data-i18n="howItWorks.step1.title">Create Your Profile</h3>
-                    <p class="text-gray-600" data-i18n="howItWorks.step1.description">Sign up and create a detailed profile highlighting your preferences, experience, and expectations.</p>
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4" data-i18n="howItWorks.title">How It Works</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto" data-i18n="howItWorks.description">Simple steps to find your perfect match and start your au pair journey</p>
                 </div>
                 
-                <!-- Step 2 -->
-                <div class="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-custom border border-gray-100">
-                    <div class="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center mb-6">
-                        <i class="fa fa-search text-secondary text-2xl"></i>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Step 1 -->
+                    <div class="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-custom border border-gray-100">
+                        <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                            <i class="fa fa-user-plus text-primary text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3" data-i18n="howItWorks.step1.title">Create Your Profile</h3>
+                        <p class="text-gray-600" data-i18n="howItWorks.step1.description">Sign up and create a detailed profile highlighting your preferences, experience, and expectations.</p>
                     </div>
-                    <h3 class="text-xl font-bold mb-3" data-i18n="howItWorks.step2.title">Browse & Connect</h3>
-                    <p class="text-gray-600" data-i18n="howItWorks.step2.description">Search through profiles that match your criteria and start conversations with potential matches.</p>
-                </div>
-                
-                <!-- Step 3 -->
-                <div class="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-custom border border-gray-100">
-                    <div class="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center mb-6">
-                        <i class="fa fa-handshake-o text-accent text-2xl"></i>
+                    
+                    <!-- Step 2 -->
+                    <div class="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-custom border border-gray-100">
+                        <div class="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center mb-6">
+                            <i class="fa fa-search text-secondary text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3" data-i18n="howItWorks.step2.title">Browse & Connect</h3>
+                        <p class="text-gray-600" data-i18n="howItWorks.step2.description">Search through profiles that match your criteria and start conversations with potential matches.</p>
                     </div>
-                    <h3 class="text-xl font-bold mb-3" data-i18n="howItWorks.step3.title">Start Your Journey</h3>
-                    <p class="text-gray-600" data-i18n="howItWorks.step3.description">Finalize your arrangement, prepare for the experience, and begin your cultural exchange adventure.</p>
+                    
+                    <!-- Step 3 -->
+                    <div class="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-custom border border-gray-100">
+                        <div class="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center mb-6">
+                            <i class="fa fa-handshake-o text-accent text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3" data-i18n="howItWorks.step3.title">Start Your Journey</h3>
+                        <p class="text-gray-600" data-i18n="howItWorks.step3.description">Finalize your arrangement, prepare for the experience, and begin your cultural exchange adventure.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- For Families Section -->
-    <section id="families" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row items-center gap-12">
-                <div class="md:w-1/2">
-                    <img src="https://picsum.photos/500/400" alt="Family with children" class="rounded-xl shadow-xl w-full h-auto">
+        <!-- For Families Section -->
+        <section id="families" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="md:w-1/2">
+                        <img src="https://picsum.photos/500/400" alt="Family with children" class="rounded-xl shadow-xl w-full h-auto">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6" data-i18n="families.title">For Host Families</h2>
+                        <p class="text-gray-600 mb-6" data-i18n="families.description">Find a qualified au pair to care for your children and bring a new cultural perspective to your home.</p>
+                        
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span data-i18n="families.benefit1">Access to pre-screened au pair profiles from around the world</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span data-i18n="families.benefit2">Communication tools to connect and interview potential candidates</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span data-i18n="families.benefit3">Support throughout the matching process and beyond</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span data-i18n="families.benefit4">Resources for a successful cultural exchange experience</span>
+                            </li>
+                        </ul>
+                        
+                        <button class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-md hover:shadow-lg">
+                            <span data-i18n="families.cta">Find an Au Pair</span> <i class="fa fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="md:w-1/2">
-                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6" data-i18n="families.title">For Host Families</h2>
-                    <p class="text-gray-600 mb-6" data-i18n="families.description">Find a qualified au pair to care for your children and bring a new cultural perspective to your home.</p>
+            </div>
+        </section>
+
+        <!-- For Au Pairs Section -->
+        <section id="aupairs" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row-reverse items-center gap-12">
+                    <div class="md:w-1/2">
+                        <img src="https://picsum.photos/500/400?random=2" alt="Au pair with children" class="rounded-xl shadow-xl w-full h-auto">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6" data-i18n="aupairs.title">For Au Pairs</h2>
+                        <p class="text-gray-600 mb-6" data-i18n="aupairs.description">Discover amazing host families around the world and embark on a life-changing cultural exchange.</p>
+                        
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                                <span data-i18n="aupairs.benefit1">Browse verified host family profiles in your desired countries</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                                <span data-i18n="aupairs.benefit2">Showcase your skills, experience, and personality to stand out</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                                <span data-i18n="aupairs.benefit3">Get guidance on visa requirements and cultural preparation</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                                <span data-i18n="aupairs.benefit4">Connect with other au pairs for advice and support</span>
+                            </li>
+                        </ul>
+                        
+                        <button class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-custom shadow-md hover:shadow-lg">
+                            <span data-i18n="aupairs.cta">Find a Host Family</span> <i class="fa fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4" data-i18n="testimonials.title">Success Stories</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto" data-i18n="testimonials.description">Hear from families and au pairs who found their perfect match through our platform</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Testimonial 1 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-custom">
+                        <div class="flex items-center mb-4">
+                            <img src="https://picsum.photos/100/100?random=3" alt="Family portrait" class="w-12 h-12 rounded-full object-cover mr-4">
+                            <div>
+                                <h4 class="font-bold" data-i18n="testimonials.family1.name">The Johnson Family</h4>
+                                <p class="text-gray-500 text-sm" data-i18n="testimonials.family1.location">United States</p>
+                            </div>
+                        </div>
+                        <div class="text-yellow-400 mb-3">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <p class="text-gray-600 italic" data-i18n="testimonials.family1.quote">"We found Maria through AuPair Connect and she's been an amazing addition to our family. Our children adore her, and she's helped them learn Spanish while sharing her culture with us."</p>
+                    </div>
                     
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <span data-i18n="families.benefit1">Access to pre-screened au pair profiles from around the world</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <span data-i18n="families.benefit2">Communication tools to connect and interview potential candidates</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <span data-i18n="families.benefit3">Support throughout the matching process and beyond</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa fa-check-circle text-green-500 mt-1 mr-3"></i>
-                            <span data-i18n="families.benefit4">Resources for a successful cultural exchange experience</span>
-                        </li>
-                    </ul>
+                    <!-- Testimonial 2 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-custom">
+                        <div class="flex items-center mb-4">
+                            <img src="https://picsum.photos/100/100?random=4" alt="Au pair portrait" class="w-12 h-12 rounded-full object-cover mr-4">
+                            <div>
+                                <h4 class="font-bold" data-i18n="testimonials.aupair1.name">Sophie Laurent</h4>
+                                <p class="text-gray-500 text-sm" data-i18n="testimonials.aupair1.location">France</p>
+                            </div>
+                        </div>
+                        <div class="text-yellow-400 mb-3">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <p class="text-gray-600 italic" data-i18n="testimonials.aupair1.quote">"My experience with the Thompson family in Canada has been life-changing. I've improved my English, traveled, and made lifelong connections. The platform made the whole process so easy!"</p>
+                    </div>
                     
-                    <button class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-md hover:shadow-lg">
-                        <span data-i18n="families.cta">Find an Au Pair</span> <i class="fa fa-arrow-right ml-2"></i>
+                    <!-- Testimonial 3 -->
+                    <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-custom">
+                        <div class="flex items-center mb-4">
+                            <img src="https://picsum.photos/100/100?random=5" alt="Family portrait" class="w-12 h-12 rounded-full object-cover mr-4">
+                            <div>
+                                <h4 class="font-bold" data-i18n="testimonials.family2.name">The Müller Family</h4>
+                                <p class="text-gray-500 text-sm" data-i18n="testimonials.family2.location">Germany</p>
+                            </div>
+                        </div>
+                        <div class="text-yellow-400 mb-3">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star-half-o"></i>
+                        </div>
+                        <p class="text-gray-600 italic" data-i18n="testimonials.family2.quote">"Finding James was perfect for our family. He's great with the kids and has taught them so much about American culture. The matching process was straightforward and efficient."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-16 bg-primary/5">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6" data-i18n="cta.title">Ready to Start Your Au Pair Journey?</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto mb-8" data-i18n="cta.description">Join thousands of families and au pairs finding their perfect matches</p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-lg hover:shadow-xl" data-i18n="cta.familyCta">
+                        Create a Family Profile
+                    </button>
+                    <button class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-custom shadow-lg hover:shadow-xl" data-i18n="cta.aupairCta">
+                        Create an Au Pair Profile
                     </button>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
-    <!-- For Au Pairs Section -->
-    <section id="aupairs" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row-reverse items-center gap-12">
-                <div class="md:w-1/2">
-                    <img src="https://picsum.photos/500/400?random=2" alt="Au pair with children" class="rounded-xl shadow-xl w-full h-auto">
-                </div>
-                <div class="md:w-1/2">
-                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6" data-i18n="aupairs.title">For Au Pairs</h2>
-                    <p class="text-gray-600 mb-6" data-i18n="aupairs.description">Discover amazing host families around the world and embark on a life-changing cultural exchange.</p>
-                    
-                    <ul class="space-y-4 mb-8">
-                        <li class="flex items-start">
-                            <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
-                            <span data-i18n="aupairs.benefit1">Browse verified host family profiles in your desired countries</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
-                            <span data-i18n="aupairs.benefit2">Showcase your skills, experience, and personality to stand out</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
-                            <span data-i18n="aupairs.benefit3">Get guidance on visa requirements and cultural preparation</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa fa-check-circle text-blue-500 mt-1 mr-3"></i>
-                            <span data-i18n="aupairs.benefit4">Connect with other au pairs for advice and support</span>
-                        </li>
-                    </ul>
-                    
-                    <button class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-custom shadow-md hover:shadow-lg">
-                        <span data-i18n="aupairs.cta">Find a Host Family</span> <i class="fa fa-arrow-right ml-2"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="py-16 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4" data-i18n="testimonials.title">Success Stories</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto" data-i18n="testimonials.description">Hear from families and au pairs who found their perfect match through our platform</p>
-            </div>
+    <!-- Profile Page -->
+    <div id="profile" class="page-content">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-8" data-i18n="userMenu.profile">My Profile</h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-custom">
-                    <div class="flex items-center mb-4">
-                        <img src="https://picsum.photos/100/100?random=3" alt="Family portrait" class="w-12 h-12 rounded-full object-cover mr-4">
-                        <div>
-                            <h4 class="font-bold" data-i18n="testimonials.family1.name">The Johnson Family</h4>
-                            <p class="text-gray-500 text-sm" data-i18n="testimonials.family1.location">United States</p>
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="md:w-1/4">
+                        <div class="text-center">
+                            <img src="https://picsum.photos/200/200?random=user" alt="Profile picture" class="w-40 h-40 rounded-full object-cover mx-auto border-4 border-primary/20 mb-4">
+                            <button class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-custom text-sm">
+                                <i class="fa fa-camera mr-1"></i> <span data-i18n="profile.changePhoto">Change Photo</span>
+                            </button>
                         </div>
                     </div>
-                    <div class="text-yellow-400 mb-3">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                    </div>
-                    <p class="text-gray-600 italic" data-i18n="testimonials.family1.quote">"We found Maria through AuPair Connect and she's been an amazing addition to our family. Our children adore her, and she's helped them learn Spanish while sharing her culture with us."</p>
-                </div>
-                
-                <!-- Testimonial 2 -->
-                <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-custom">
-                    <div class="flex items-center mb-4">
-                        <img src="https://picsum.photos/100/100?random=4" alt="Au pair portrait" class="w-12 h-12 rounded-full object-cover mr-4">
-                        <div>
-                            <h4 class="font-bold" data-i18n="testimonials.aupair1.name">Sophie Laurent</h4>
-                            <p class="text-gray-500 text-sm" data-i18n="testimonials.aupair1.location">France</p>
+                    
+                    <div class="md:w-3/4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="profile.fullName">Full Name</label>
+                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" value="John Doe">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="profile.email">Email</label>
+                                <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom bg-gray-50" value="john.doe@example.com" disabled>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="profile.location">Location</label>
+                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" value="New York, USA">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="profile.userType">User Type</label>
+                                <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom">
+                                    <option data-i18n="register.family">Host Family</option>
+                                    <option data-i18n="register.aupair">Au Pair</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="profile.bio">Bio</label>
+                            <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" rows="4">We are a family of 4 looking for a responsible au pair to help with our children aged 6 and 8. We enjoy outdoor activities and cultural exchanges.</textarea>
+                        </div>
+                        
+                        <div class="mt-6 flex justify-end">
+                            <button class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-md hover:shadow-lg">
+                                <span data-i18n="profile.saveChanges">Save Changes</span>
+                            </button>
                         </div>
                     </div>
-                    <div class="text-yellow-400 mb-3">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                    </div>
-                    <p class="text-gray-600 italic" data-i18n="testimonials.aupair1.quote">"My experience with the Thompson family in Canada has been life-changing. I've improved my English, traveled, and made lifelong connections. The platform made the whole process so easy!"</p>
-                </div>
-                
-                <!-- Testimonial 3 -->
-                <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-custom">
-                    <div class="flex items-center mb-4">
-                        <img src="https://picsum.photos/100/100?random=5" alt="Family portrait" class="w-12 h-12 rounded-full object-cover mr-4">
-                        <div>
-                            <h4 class="font-bold" data-i18n="testimonials.family2.name">The Müller Family</h4>
-                            <p class="text-gray-500 text-sm" data-i18n="testimonials.family2.location">Germany</p>
-                        </div>
-                    </div>
-                    <div class="text-yellow-400 mb-3">
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star-half-o"></i>
-                    </div>
-                    <p class="text-gray-600 italic" data-i18n="testimonials.family2.quote">"Finding James was perfect for our family. He's great with the kids and has taught them so much about American culture. The matching process was straightforward and efficient."</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- CTA Section -->
-    <section class="py-16 bg-primary/5">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6" data-i18n="cta.title">Ready to Start Your Au Pair Journey?</h2>
-            <p class="text-gray-600 max-w-2xl mx-auto mb-8" data-i18n="cta.description">Join thousands of families and au pairs finding their perfect matches</p>
-            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <button class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-lg hover:shadow-xl" data-i18n="cta.familyCta">
-                    Create a Family Profile
-                </button>
-                <button class="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-custom shadow-lg hover:shadow-xl" data-i18n="cta.aupairCta">
-                    Create an Au Pair Profile
-                </button>
+    <!-- Messages Page -->
+    <div id="messages" class="page-content">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-8" data-i18n="userMenu.messages">Messages</h2>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="flex flex-col md:flex-row h-[calc(100vh-240px)]">
+                    <!-- Messages List -->
+                    <div class="md:w-1/3 border-r border-gray-200 overflow-y-auto">
+                        <div class="p-4 border-b border-gray-200">
+                            <div class="relative">
+                                <input type="text" placeholder="Search messages..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom">
+                                <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Message Item (Active) -->
+                        <div class="p-4 border-b border-gray-200 bg-primary/5 hover:bg-primary/10 transition-custom cursor-pointer flex items-center">
+                            <img src="https://picsum.photos/100/100?random=6" alt="Sophie Laurent" class="w-12 h-12 rounded-full object-cover mr-4">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-gray-900 truncate">Sophie Laurent</h4>
+                                    <span class="text-xs text-gray-500">10:23 AM</span>
+                                </div>
+                                <p class="text-sm text-gray-700 truncate">Yes, I'd love to discuss more about your family!</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Message Items -->
+                        <div class="p-4 border-b border-gray-200 hover:bg-gray-50 transition-custom cursor-pointer flex items-center">
+                            <img src="https://picsum.photos/100/100?random=7" alt="The Johnson Family" class="w-12 h-12 rounded-full object-cover mr-4">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-gray-900 truncate">The Johnson Family</h4>
+                                    <span class="text-xs text-gray-500">Yesterday</span>
+                                </div>
+                                <p class="text-sm text-gray-500 truncate">We received your application. Can we schedule a call?</p>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 border-b border-gray-200 hover:bg-gray-50 transition-custom cursor-pointer flex items-center">
+                            <img src="https://picsum.photos/100/100?random=8" alt="Maria Garcia" class="w-12 h-12 rounded-full object-cover mr-4">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-medium text-gray-900 truncate">Maria Garcia</h4>
+                                    <span class="text-xs text-gray-500">2 days ago</span>
+                                </div>
+                                <p class="text-sm text-gray-500 truncate">Thank you for your message! I'm interested in your offer.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Message Conversation -->
+                    <div class="md:w-2/3 flex flex-col">
+                        <!-- Conversation Header -->
+                        <div class="p-4 border-b border-gray-200 flex items-center">
+                            <img src="https://picsum.photos/100/100?random=6" alt="Sophie Laurent" class="w-10 h-10 rounded-full object-cover mr-3">
+                            <div>
+                                <h4 class="font-medium text-gray-900">Sophie Laurent</h4>
+                                <p class="text-xs text-green-500"><i class="fa fa-circle mr-1"></i> <span data-i18n="messages.online">Online</span></p>
+                            </div>
+                        </div>
+                        
+                        <!-- Conversation Messages -->
+                        <div class="flex-1 p-4 overflow-y-auto bg-gray-50">
+                            <div class="flex mb-4">
+                                <img src="https://picsum.photos/100/100?random=6" alt="Sophie Laurent" class="w-8 h-8 rounded-full object-cover mr-2 mt-1">
+                                <div>
+                                    <p class="bg-white px-4 py-2 rounded-lg rounded-tl-none shadow-sm text-sm">Hello! I saw your profile and I'm interested in learning more about your family.</p>
+                                    <p class="text-xs text-gray-500 mt-1">9:45 AM</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-end mb-4">
+                                <div class="text-right">
+                                    <p class="bg-primary text-white px-4 py-2 rounded-lg rounded-tr-none shadow-sm text-sm">Hi Sophie! We're looking for an au pair who can help with our two children.</p>
+                                    <p class="text-xs text-gray-500 mt-1">10:10 AM</p>
+                                </div>
+                                <img src="https://picsum.photos/100/100?random=user" alt="You" class="w-8 h-8 rounded-full object-cover ml-2 mt-1">
+                            </div>
+                            
+                            <div class="flex mb-4">
+                                <img src="https://picsum.photos/100/100?random=6" alt="Sophie Laurent" class="w-8 h-8 rounded-full object-cover mr-2 mt-1">
+                                <div>
+                                    <p class="bg-white px-4 py-2 rounded-lg rounded-tl-none shadow-sm text-sm">Yes, I'd love to discuss more about your family!</p>
+                                    <p class="text-xs text-gray-500 mt-1">10:23 AM</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Message Input -->
+                        <div class="p-4 border-t border-gray-200">
+                            <div class="flex items-center">
+                                <input type="text" placeholder="Type a message..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom mr-2">
+                                <button class="p-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom">
+                                    <i class="fa fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </section>
+    </div>
+
+    <!-- Bookmarks Page -->
+    <div id="bookmarks" class="page-content">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-8" data-i18n="userMenu.bookmarks">Bookmarks</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Bookmarked Profile 1 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-custom">
+                    <div class="relative">
+                        <img src="https://picsum.photos/400/200?random=9" alt="Family home" class="w-full h-48 object-cover">
+                        <button class="absolute top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-red-500 hover:bg-white transition-custom">
+                            <i class="fa fa-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="p-5">
+                        <div class="flex items-center mb-3">
+                            <img src="https://picsum.photos/100/100?random=10" alt="The Thompson Family" class="w-12 h-12 rounded-full object-cover mr-3">
+                            <div>
+                                <h3 class="font-bold">The Thompson Family</h3>
+                                <p class="text-sm text-gray-500">Toronto, Canada</p>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">We're a warm family of 3 looking for an au pair to help with our 5-year-old daughter. We enjoy outdoor activities and cultural exchanges.</p>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full" data-i18n="bookmarks.hostFamily">Host Family</span>
+                            <a href="#" class="text-primary hover:text-primary/80 text-sm font-medium">
+                                <span data-i18n="bookmarks.viewProfile">View Profile</span> <i class="fa fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bookmarked Profile 2 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-custom">
+                    <div class="relative">
+                        <img src="https://picsum.photos/400/200?random=11" alt="Au pair" class="w-full h-48 object-cover">
+                        <button class="absolute top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-red-500 hover:bg-white transition-custom">
+                            <i class="fa fa-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="p-5">
+                        <div class="flex items-center mb-3">
+                            <img src="https://picsum.photos/100/100?random=12" alt="Carlos Rodriguez" class="w-12 h-12 rounded-full object-cover mr-3">
+                            <div>
+                                <h3 class="font-bold">Carlos Rodriguez</h3>
+                                <p class="text-sm text-gray-500">Madrid, Spain</p>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">Friendly and responsible au pair with 2 years of experience. I love working with children and am excited to experience a new culture.</p>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full" data-i18n="bookmarks.auPair">Au Pair</span>
+                            <a href="#" class="text-primary hover:text-primary/80 text-sm font-medium">
+                                <span data-i18n="bookmarks.viewProfile">View Profile</span> <i class="fa fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bookmarked Profile 3 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-custom">
+                    <div class="relative">
+                        <img src="https://picsum.photos/400/200?random=13" alt="Family home" class="w-full h-48 object-cover">
+                        <button class="absolute top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center text-red-500 hover:bg-white transition-custom">
+                            <i class="fa fa-heart"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="p-5">
+                        <div class="flex items-center mb-3">
+                            <img src="https://picsum.photos/100/100?random=14" alt="The Kim Family" class="w-12 h-12 rounded-full object-cover mr-3">
+                            <div>
+                                <h3 class="font-bold">The Kim Family</h3>
+                                <p class="text-sm text-gray-500">Seoul, South Korea</p>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-600 text-sm mb-4">International family looking for an au pair to help with our two children. We can offer a private room and cultural experiences.</p>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full" data-i18n="bookmarks.hostFamily">Host Family</span>
+                            <a href="#" class="text-primary hover:text-primary/80 text-sm font-medium">
+                                <span data-i18n="bookmarks.viewProfile">View Profile</span> <i class="fa fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Page -->
+    <div id="settings" class="page-content">
+        <div class="container mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold mb-8" data-i18n="userMenu.settings">Settings</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Settings Navigation -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-4 border-b border-gray-200">
+                            <h3 class="font-bold" data-i18n="settings.accountSettings">Account Settings</h3>
+                        </div>
+                        
+                        <nav class="p-2">
+                            <a href="#settings" class="block px-4 py-3 rounded-lg bg-primary/5 text-primary font-medium mb-1">
+                                <i class="fa fa-user-o mr-3 w-5 text-center"></i> <span data-i18n="settings.profile">Profile</span>
+                            </a>
+                            <a href="#" class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-custom mb-1">
+                                <i class="fa fa-lock mr-3 w-5 text-center"></i> <span data-i18n="settings.security">Security</span>
+                            </a>
+                            <a href="#" class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-custom mb-1">
+                                <i class="fa fa-bell-o mr-3 w-5 text-center"></i> <span data-i18n="settings.notifications">Notifications</span>
+                            </a>
+                            <a href="#" class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-custom mb-1">
+                                <i class="fa fa-language mr-3 w-5 text-center"></i> <span data-i18n="settings.language">Language</span>
+                            </a>
+                            <a href="#" class="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-custom">
+                                <i class="fa fa-question-circle-o mr-3 w-5 text-center"></i> <span data-i18n="settings.help">Help & Support</span>
+                            </a>
+                        </nav>
+                        
+                        <div class="p-4 border-t border-gray-200 mt-4">
+                            <button class="w-full flex items-center justify-center px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-custom">
+                                <i class="fa fa-trash-o mr-2"></i> <span data-i18n="settings.deleteAccount">Delete Account</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Content -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                        <h3 class="text-xl font-bold mb-6" data-i18n="settings.profileInformation">Profile Information</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="settings.firstName">First Name</label>
+                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" value="John">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="settings.lastName">Last Name</label>
+                                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" value="Doe">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="settings.email">Email Address</label>
+                                <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" value="john.doe@example.com">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="settings.phone">Phone Number</label>
+                                <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom" value="+1 (555) 123-4567">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-bold mb-6" data-i18n="settings.preferences">Preferences</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium text-gray-900" data-i18n="settings.emailNotifications">Email Notifications</h4>
+                                    <p class="text-sm text-gray-500" data-i18n="settings.receiveUpdates">Receive updates about new matches and messages</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium text-gray-900" data-i18n="settings.pushNotifications">Push Notifications</h4>
+                                    <p class="text-sm text-gray-500" data-i18n="settings.mobileAlerts">Receive alerts on your mobile device</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium text-gray-900" data-i18n="settings.profileVisibility">Profile Visibility</h4>
+                                    <p class="text-sm text-gray-500" data-i18n="settings.showProfile">Show my profile to other users</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 flex justify-end">
+                            <button class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom shadow-md hover:shadow-lg">
+                                <span data-i18n="settings.saveSettings">Save Settings</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-dark text-white py-12">
@@ -485,7 +938,7 @@
     </div>
 
     <script>
-        // Translation data - English and Chinese
+        // Translation data - English and Chinese with user menu translations
         const translations = {
             en: {
                 brand: "AuPair Connect",
@@ -496,6 +949,13 @@
                     successStories: "Success Stories",
                     login: "Log In",
                     getStarted: "Get Started"
+                },
+                userMenu: {
+                    profile: "My Profile",
+                    messages: "Messages",
+                    bookmarks: "Bookmarks",
+                    settings: "Settings",
+                    logout: "Logout"
                 },
                 hero: {
                     title: "Find Your Perfect",
@@ -610,6 +1070,44 @@
                     cta: "Create Account",
                     haveAccount: "Already have an account?",
                     login: "Log in"
+                },
+                profile: {
+                    changePhoto: "Change Photo",
+                    fullName: "Full Name",
+                    email: "Email",
+                    location: "Location",
+                    userType: "User Type",
+                    bio: "Bio",
+                    saveChanges: "Save Changes"
+                },
+                messages: {
+                    online: "Online"
+                },
+                bookmarks: {
+                    hostFamily: "Host Family",
+                    auPair: "Au Pair",
+                    viewProfile: "View Profile"
+                },
+                settings: {
+                    accountSettings: "Account Settings",
+                    profile: "Profile",
+                    security: "Security",
+                    notifications: "Notifications",
+                    language: "Language",
+                    help: "Help & Support",
+                    deleteAccount: "Delete Account",
+                    profileInformation: "Profile Information",
+                    firstName: "First Name",
+                    lastName: "Last Name",
+                    phone: "Phone Number",
+                    preferences: "Preferences",
+                    emailNotifications: "Email Notifications",
+                    receiveUpdates: "Receive updates about new matches and messages",
+                    pushNotifications: "Push Notifications",
+                    mobileAlerts: "Receive alerts on your mobile device",
+                    profileVisibility: "Profile Visibility",
+                    showProfile: "Show my profile to other users",
+                    saveSettings: "Save Settings"
                 }
             },
             zh: {
@@ -621,6 +1119,13 @@
                     successStories: "成功案例",
                     login: "登录",
                     getStarted: "立即开始"
+                },
+                userMenu: {
+                    profile: "我的资料",
+                    messages: "消息",
+                    bookmarks: "收藏",
+                    settings: "设置",
+                    logout: "退出登录"
                 },
                 hero: {
                     title: "找到您理想的",
@@ -735,6 +1240,44 @@
                     cta: "创建账号",
                     haveAccount: "已有账号？",
                     login: "登录"
+                },
+                profile: {
+                    changePhoto: "更换照片",
+                    fullName: "全名",
+                    email: "电子邮箱",
+                    location: "所在地",
+                    userType: "用户类型",
+                    bio: "个人简介",
+                    saveChanges: "保存更改"
+                },
+                messages: {
+                    online: "在线"
+                },
+                bookmarks: {
+                    hostFamily: "寄宿家庭",
+                    auPair: "互惠生",
+                    viewProfile: "查看资料"
+                },
+                settings: {
+                    accountSettings: "账户设置",
+                    profile: "个人资料",
+                    security: "安全",
+                    notifications: "通知",
+                    language: "语言",
+                    help: "帮助与支持",
+                    deleteAccount: "删除账户",
+                    profileInformation: "个人资料信息",
+                    firstName: "名字",
+                    lastName: "姓氏",
+                    phone: "电话号码",
+                    preferences: "偏好设置",
+                    emailNotifications: "邮件通知",
+                    receiveUpdates: "接收关于新匹配和消息的更新",
+                    pushNotifications: "推送通知",
+                    mobileAlerts: "在移动设备上接收提醒",
+                    profileVisibility: "资料可见性",
+                    showProfile: "向其他用户展示我的资料",
+                    saveSettings: "保存设置"
                 }
             }
         };
@@ -789,12 +1332,20 @@
             setLanguage(initialLang);
         }
         
-        // Mobile menu toggle
+        // Mobile menu toggle for guests
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
         
         mobileMenuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Mobile menu toggle for logged in users
+        const userMobileMenuBtn = document.getElementById('userMobileMenuBtn');
+        const userMobileMenu = document.getElementById('userMobileMenu');
+        
+        userMobileMenuBtn.addEventListener('click', () => {
+            userMobileMenu.classList.toggle('hidden');
         });
         
         // Navbar scroll effect
@@ -814,6 +1365,8 @@
         document.getElementById('langZh').addEventListener('click', () => setLanguage('zh'));
         document.getElementById('mobileLangEn').addEventListener('click', () => setLanguage('en'));
         document.getElementById('mobileLangZh').addEventListener('click', () => setLanguage('zh'));
+        document.getElementById('userMobileLangEn').addEventListener('click', () => setLanguage('en'));
+        document.getElementById('userMobileLangZh').addEventListener('click', () => setLanguage('zh'));
         
         // Modal functionality
         const loginBtn = document.getElementById('loginBtn');
@@ -893,18 +1446,64 @@
             }
         });
         
+        // Handle login success - update UI to show logged in state
+        function handleLoginSuccess(userData) {
+            // 隐藏访客导航，显示用户导航
+            document.getElementById('guestNav').classList.add('hidden');
+            document.getElementById('userNav').classList.remove('hidden');
+            
+            // 安全地获取用户名（防止name字段不存在的情况）
+            const userNameElement = document.getElementById('userName');
+            if (userNameElement) {
+                // 从正确的用户数据结构中获取name
+                userNameElement.textContent = userData.name || userData.email?.split('@')[0] || 'User';
+            }
+            
+            // 存储用户数据到localStorage
+            localStorage.setItem('userData', JSON.stringify(userData));
+            
+            // 关闭移动菜单（如果打开）
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+        
+        // Handle logout
+        function handleLogout() {
+            // Clear user data from localStorage
+            localStorage.removeItem('userData');
+            
+            // Show guest navigation, hide user navigation
+            document.getElementById('userNav').classList.add('hidden');
+            document.getElementById('guestNav').classList.remove('hidden');
+            
+            // Close user mobile menu if open
+            if (!userMobileMenu.classList.contains('hidden')) {
+                userMobileMenu.classList.add('hidden');
+            }
+            
+            // Switch back to home page after logout
+            navigateTo('home');
+            
+            // Optionally call logout API
+            fetch('/api/logout', {
+                method: 'POST',
+                credentials: 'include'
+            }).catch(error => console.error('Logout error:', error));
+        }
+        
         // Form submissions
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
         
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            // Get form values
+    
+            // 获取表单值
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
-            // Send request to backend API
+            // 发送请求到后端API
             fetch('/api/login', {
                 method: 'POST',
                 headers: {
@@ -913,19 +1512,33 @@
                 body: JSON.stringify({ email, password }),
                 credentials: 'include'
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json().catch(() => {
+                    return { success: false, message: 'Invalid response format from server' };
+                });
+            })
             .then(data => {
+                console.log('Login response data:', data);
+                
                 if (data.success) {
-                    alert(data.message);
-                    closeLoginModalFunc();
-                    // Update UI for logged in user
+                    // 关键修复：用户数据在 data.data 中而不是 data.user 中
+                    if (data.data) {
+                        handleLoginSuccess(data.data); // 传递正确的用户数据路径
+                        alert(data.message || 'Login successful!');
+                        closeLoginModalFunc();
+                    } else {
+                        throw new Error('User data is missing from response');
+                    }
                 } else {
-                    alert(data.message);
+                    alert(data.message || 'Login failed. Please try again.');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred during login');
+                console.error('Login error details:', error);
+                alert(`An error occurred during login: ${error.message}\nCheck console for details`);
             });
         });
         
@@ -950,6 +1563,8 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // Auto-login after registration
+                    handleLoginSuccess({ name, email, user_type: userType });
                     alert(data.message);
                     closeRegisterModalFunc();
                 } else {
@@ -962,32 +1577,112 @@
             });
         });
         
+        // Logout button handlers
+        document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+        document.getElementById('mobileLogoutBtn').addEventListener('click', handleLogout);
+        
+        // Page navigation functionality
+        function navigateTo(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                // Scroll to top of page
+                window.scrollTo(0, 0);
+            }
+            
+            // Close mobile menus if open
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+            }
+            if (!userMobileMenu.classList.contains('hidden')) {
+                userMobileMenu.classList.add('hidden');
+            }
+        }
+        
+        // Home link handler
+        document.getElementById('homeLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            navigateTo('home');
+        });
+        
+        // Page link handlers
+        document.querySelectorAll('.page-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1); // Remove #
+                navigateTo(targetId);
+            });
+        });
+        
         // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        document.querySelectorAll('a[href^="#"]:not(.page-link)').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 
                 const targetId = this.getAttribute('href');
                 if (targetId === '#') return;
                 
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    // Close mobile menu if open
-                    if (!mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('hidden');
-                    }
+                // If we're on a different page, first navigate to home
+                if (!document.getElementById('home').classList.contains('active')) {
+                    navigateTo('home');
                     
-                    // Scroll to target
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
+                    // Wait for home page to load, then scroll
+                    setTimeout(() => {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                            window.scrollBy(0, -80); // Adjust for fixed header
+                        }
+                    }, 300);
+                } else {
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        window.scrollBy(0, -80); // Adjust for fixed header
+                    }
                 }
             });
         });
         
-        // Initialize language on page load
-        document.addEventListener('DOMContentLoaded', initLanguage);
+        // Check if user is already logged in on page load
+        function checkLoginStatus() {
+            const savedUser = localStorage.getItem('userData');
+            if (savedUser) {
+                try {
+                    const userData = JSON.parse(savedUser);
+                    handleLoginSuccess(userData);
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    localStorage.removeItem('userData');
+                }
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initLanguage();
+            checkLoginStatus();
+            
+            // Check for hash in URL to navigate to specific page
+            if (window.location.hash) {
+                const pageId = window.location.hash.substring(1);
+                if (document.getElementById(pageId)) {
+                    navigateTo(pageId);
+                }
+            }
+        });
     </script>
 </body>
 </html>
